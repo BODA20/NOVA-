@@ -1,0 +1,84 @@
+const Joi = require('joi');
+
+// نفس قيم enum بتاعت mongoose القديمة
+const difficultyValues = ['easy', 'medium', 'difficult'];
+
+exports.createTourSchema = Joi.object({
+  name: Joi.string().trim().min(10).max(40).required(),
+  secretTour: Joi.boolean().default(false),
+
+  price: Joi.number().min(0).required(),
+  priceDiscount: Joi.number().min(0).optional(),
+
+  ratingsAverage: Joi.number().min(1).max(5).default(4.5),
+  ratingsQuantity: Joi.number().min(0).default(0),
+
+  maxGroupSize: Joi.number().integer().min(1).required(),
+  difficulty: Joi.string()
+    .valid(...difficultyValues)
+    .required(),
+
+  duration: Joi.number().min(1).required(),
+
+  summary: Joi.string().trim().required(),
+  description: Joi.string().trim().allow('', null),
+
+  imageCover: Joi.string().required(),
+  images: Joi.array().items(Joi.string()).default([]),
+
+  createdAt: Joi.date().optional(), // عادة مش بتتبعت من العميل
+  startDates: Joi.array().items(Joi.date()).default([]),
+})
+  // نفس validator اللي كان في mongoose: discount أقل من price
+  .custom((value, helpers) => {
+    if (
+      value.priceDiscount !== undefined &&
+      value.priceDiscount !== null &&
+      value.priceDiscount >= value.price
+    ) {
+      return helpers.message('priceDiscount must be below price');
+    }
+    return value;
+  });
+
+exports.updateTourSchema = Joi.object({
+  name: Joi.string().trim().min(10).max(40),
+  secretTour: Joi.boolean(),
+
+  price: Joi.number().min(0),
+  priceDiscount: Joi.number().min(0),
+
+  ratingsAverage: Joi.number().min(1).max(5),
+  ratingsQuantity: Joi.number().min(0),
+
+  maxGroupSize: Joi.number().integer().min(1),
+  difficulty: Joi.string().valid(...difficultyValues),
+
+  duration: Joi.number().min(1),
+
+  summary: Joi.string().trim(),
+  description: Joi.string().trim().allow('', null),
+
+  imageCover: Joi.string(),
+  images: Joi.array().items(Joi.string()),
+
+  startDates: Joi.array().items(Joi.date()),
+})
+  .min(1)
+  .custom((value, helpers) => {
+    if (
+      value.price !== undefined &&
+      value.priceDiscount !== undefined &&
+      value.priceDiscount >= value.price
+    ) {
+      return helpers.message('priceDiscount must be below price');
+    }
+    return value;
+  });
+
+exports.tourStatsQuerySchema = Joi.object({
+  minRating: Joi.number().min(1).max(5).optional(),
+  difficulty: Joi.string()
+    .valid(...difficultyValues)
+    .optional(),
+});
