@@ -1,0 +1,43 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "Leraing node, Express ,MongoDb",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "start:prod": "cross-env NODE_ENV=production node server.js",
+    "debug": "ndb server.js"
+  },
+  "author": "BODA",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.0.1",
+    "morgan": "^1.10.1",
+    "nodemailer": "^7.0.13",
+    "nodemon": "^3.1.11",
+    "slugify": "^1.6.6",
+    "util": "^0.12.5",
+    "validator": "^13.15.26",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.7.4"
+  }
+}
