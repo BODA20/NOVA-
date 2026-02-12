@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 
 const tourRouter = require('./modules/tourModules/tourRout');
+const authRouter = require('./modules/userModels/authRout');
 const userRouter = require('./modules/userModels/userRout');
 const AppError = require('./common/errHandling/appError');
 const errorController = require('./common/errHandling/errorController');
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
 
 // 2) ROUTES
 app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', authRouter);
 app.use('/api/v1/users', userRouter);
 
 // Handling unhandled routes

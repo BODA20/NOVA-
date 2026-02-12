@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-// نفس قيم enum بتاعت mongoose القديمة
 const difficultyValues = ['easy', 'medium', 'difficult'];
 
 exports.createTourSchema = Joi.object({
@@ -26,10 +25,10 @@ exports.createTourSchema = Joi.object({
   imageCover: Joi.string().required(),
   images: Joi.array().items(Joi.string()).default([]),
 
-  createdAt: Joi.date().optional(), // عادة مش بتتبعت من العميل
+  createdAt: Joi.date().optional(),
   startDates: Joi.array().items(Joi.date()).default([]),
 })
-  // نفس validator اللي كان في mongoose: discount أقل من price
+
   .custom((value, helpers) => {
     if (
       value.priceDiscount !== undefined &&
