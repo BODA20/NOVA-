@@ -53,3 +53,41 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     data: { tour },
   });
 });
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',').map(Number);
+
+  if (!lat || !lng) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Please provide lat,lng in format lat,lng',
+    });
+  }
+  const tours = await tourService.getToursWithin({ distance, lat, lng, unit });
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: { tours },
+  });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',').map(Number);
+
+  if (!lat || !lng) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Please provide lat,lng in format lat,lng',
+    });
+  }
+
+  const distances = await tourService.getDistances({ lat, lng, unit });
+
+  res.status(200).json({
+    status: 'success',
+    results: distances.length,
+    data: { distances },
+  });
+});

@@ -2,6 +2,18 @@ const Joi = require('joi');
 
 const difficultyValues = ['easy', 'medium', 'difficult'];
 
+const geoPointSchema = Joi.object({
+  type: Joi.string().valid('Point').default('Point'),
+  coordinates: Joi.array()
+    .ordered(
+      Joi.number().min(-180).max(180).required(), // lng
+      Joi.number().min(-90).max(90).required(), // lat
+    )
+    .required(),
+  address: Joi.string().optional(),
+  description: Joi.string().optional(),
+});
+
 exports.createTourSchema = Joi.object({
   name: Joi.string().trim().min(10).max(40).required(),
   secretTour: Joi.boolean().default(false),
@@ -27,18 +39,25 @@ exports.createTourSchema = Joi.object({
 
   createdAt: Joi.date().optional(),
   startDates: Joi.array().items(Joi.date()).default([]),
-})
 
-  .custom((value, helpers) => {
-    if (
-      value.priceDiscount !== undefined &&
-      value.priceDiscount !== null &&
-      value.priceDiscount >= value.price
-    ) {
-      return helpers.message('priceDiscount must be below price');
-    }
-    return value;
-  });
+  startLocation: geoPointSchema.required(),
+  locations: Joi.array()
+    .items(
+      geoPointSchema.keys({
+        day: Joi.number().integer().min(1).optional(),
+      }),
+    )
+    .default([]),
+}).custom((value, helpers) => {
+  if (
+    value.priceDiscount !== undefined &&
+    value.priceDiscount !== null &&
+    value.priceDiscount >= value.price
+  ) {
+    return helpers.message('priceDiscount must be below price');
+  }
+  return value;
+});
 
 exports.updateTourSchema = Joi.object({
   name: Joi.string().trim().min(10).max(40),
@@ -62,6 +81,13 @@ exports.updateTourSchema = Joi.object({
   images: Joi.array().items(Joi.string()),
 
   startDates: Joi.array().items(Joi.date()),
+
+  startLocation: geoPointSchema,
+  locations: Joi.array().items(
+    geoPointSchema.keys({
+      day: Joi.number().integer().min(1).optional(),
+    }),
+  ),
 })
   .min(1)
   .custom((value, helpers) => {

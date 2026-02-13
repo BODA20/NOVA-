@@ -5,7 +5,7 @@ const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      unique: true, // index (مش validator)
+      unique: true,
       trim: true,
     },
     slug: String,
@@ -36,7 +36,6 @@ const tourSchema = new mongoose.Schema(
 
     difficulty: {
       type: String,
-      // enum removed
     },
 
     duration: {
@@ -45,7 +44,6 @@ const tourSchema = new mongoose.Schema(
 
     priceDiscount: {
       type: Number,
-      // custom validator removed
     },
 
     summary: {
@@ -70,12 +68,44 @@ const tourSchema = new mongoose.Schema(
     },
 
     startDates: [Date],
+    // Geospatial
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true,
+      },
+      address: String,
+      description: String,
+    },
+
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: {
+          type: [Number], // [lng, lat]
+          required: true,
+        },
+        day: Number,
+        description: String,
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
 );
+
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
@@ -90,7 +120,12 @@ tourSchema.pre(/^find/, function () {
 });
 
 tourSchema.pre('aggregate', function () {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  const pipeline = this.pipeline();
+  const firstStage = pipeline[0];
+
+  if (firstStage && firstStage.$geoNear) return;
+
+  pipeline.unshift({ $match: { secretTour: { $ne: true } } });
 });
 
 const Tour = mongoose.model('Tour', tourSchema);

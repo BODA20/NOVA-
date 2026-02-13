@@ -1,8 +1,8 @@
 const express = require('express');
 const tourController = require('./tourController');
 const tourMiddlewares = require('./../../common/middelWare/tourMiddlewares');
+const userMiddelware = require('./../../common/middelWare/userMiddlewares');
 const dashboardController = require('./dashBoard/dashboardController');
-const authController = require('./../userModels/authController');
 const { createTourSchema, updateTourSchema } = require('./tour.validator');
 const router = express.Router();
 
@@ -10,52 +10,60 @@ const router = express.Router();
 router
   .route('/tour-stats')
   .get(
-    authController.protect,
-    authController.alloweOnly('admin', 'lead-guide'),
+    userMiddelware.protect,
+    userMiddelware.restrictTo('admin', 'lead-guide'),
     dashboardController.getTourStats,
   );
 
 router
   .route('/monthly-plan/:year')
   .get(
-    authController.protect,
-    authController.alloweOnly('admin', 'lead-guide'),
+    userMiddelware.protect,
+    userMiddelware.restrictTo('admin', 'lead-guide'),
     dashboardController.getMonthlyPlan,
   );
 
 router
   .route('/top-5-cheap')
   .get(
-    authController.protect,
+    userMiddelware.protect,
     tourMiddlewares.aliasTopTours,
-    authController.alloweOnly('admin', 'lead-guide'),
+    userMiddelware.restrictTo('admin', 'lead-guide'),
     tourController.getAllTours,
   );
 
 // Tours
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
+  .get(userMiddelware.protect, tourController.getAllTours)
   .post(
-    authController.protect,
-    authController.alloweOnly('admin', 'lead-guide'),
-    tourMiddlewares.validate(createTourSchema, 'body'),
+    userMiddelware.protect,
+    userMiddelware.restrictTo('admin', 'lead-guide'),
+    userMiddelware.validate(createTourSchema, 'body'),
     tourController.createTour,
   );
 
 router
   .route('/:id')
-  .get(authController.protect, tourController.getTour)
+  .get(userMiddelware.protect, tourController.getTour)
   .patch(
-    authController.protect,
-    authController.alloweOnly('admin', 'lead-guide'),
-    tourMiddlewares.validate(updateTourSchema, 'body'),
+    userMiddelware.protect,
+    userMiddelware.restrictTo('admin', 'lead-guide'),
+    userMiddelware.validate(updateTourSchema, 'body'),
     tourController.updateTour,
   )
   .delete(
-    authController.protect,
-    authController.alloweOnly('admin', 'lead-guide'),
+    userMiddelware.protect,
+    userMiddelware.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
   );
+
+router
+  .route('/within/:distance/center/:latlng/unit/:unit')
+  .get(userMiddelware.protect, tourController.getToursWithin);
+
+router
+  .route('/distances/center/:latlng/unit/:unit')
+  .get(userMiddelware.protect, tourController.getDistances);
 
 module.exports = router;
