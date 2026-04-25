@@ -1,0 +1,13 @@
+.env
+
+node_modules
+
+package-lock.json
+
+dev-data
+
+.eslintrc.json
+
+.prettierrc
+
+public

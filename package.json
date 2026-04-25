@@ -2,16 +2,24 @@
   "name": "natours",
   "version": "1.0.0",
   "description": "Leraing node, Express ,MongoDb",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production node server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "test": "jest --watchAll --maxWorkers=1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./tests/setup.js"
+    ]
   },
   "author": "BODA",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "express-mongo-sanitize": "^2.2.0",
@@ -26,7 +34,6 @@
     "nodemailer": "^7.0.13",
     "nodemon": "^3.1.11",
     "slugify": "^1.6.6",
-    "util": "^0.12.5",
     "validator": "^13.15.26",
     "xss-clean": "^0.1.4"
   },
@@ -39,6 +46,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
-    "prettier": "^3.7.4"
+    "jest": "^29.7.0",
+    "prettier": "^3.7.4",
+    "supertest": "^7.0.0"
   }
 }
