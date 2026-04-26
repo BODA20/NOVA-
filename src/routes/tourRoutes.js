@@ -1,6 +1,6 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
-const dashboardController = require('../controllers/dashboardController');
+// Dashboard controller removed
 const authMiddleware = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validationMiddleware');
 const {
@@ -10,8 +10,7 @@ const {
 
 const router = express.Router();
 
-router.route('/tour-stats').get(dashboardController.getTourStats);
-router.route('/monthly-plan/:year').get(dashboardController.getMonthlyPlan);
+// Stats and monthly plan routes moved to admin/dashboard routes
 
 router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
