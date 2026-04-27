@@ -3,9 +3,10 @@ module.exports = {
   verbose: true,
   setupFilesAfterEnv: ['./tests/setup.js'],
   collectCoverageFrom: [
-    'src/modules/**/*.js',
-    '!src/modules/**/*.validation.js',
-    '!src/modules/**/*.routes.js',
+    'src/controllers/**/*.js',
+    'src/services/**/*.js',
+    'src/middlewares/**/*.js',
+    'src/models/**/*.js',
   ],
   coverageThreshold: {
     global: {

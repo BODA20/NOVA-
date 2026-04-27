@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production node server.js",
-    "test": "jest --watchAll --maxWorkers=1",
+    "test": "jest --runInBand",
+    "test:unit": "jest tests/unit --runInBand",
+    "test:integration": "jest tests/integration tests/auth tests/security --runInBand",
     "test:ci": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand"
   },

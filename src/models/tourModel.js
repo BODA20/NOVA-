@@ -125,28 +125,25 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 // Document Middleware: runs before .save() and .create()
-tourSchema.pre('save', function (next) {
+tourSchema.pre('save', async function () {
   this.slug = slugify(this.name, { lower: true });
-  next();
 });
 
 // Query Middleware
-tourSchema.pre(/^find/, function (next) {
+tourSchema.pre(/^find/, async function () {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
-  next();
 });
 
-tourSchema.pre(/^find/, function (next) {
+tourSchema.pre(/^find/, async function () {
   this.populate({
     path: 'guides',
     select: '-__v -passwordChangedAt',
   });
-  next();
 });
 
 // Aggregation Middleware
-tourSchema.pre('aggregate', function (next) {
+tourSchema.pre('aggregate', async function () {
   // Check if it's not a geoNear stage (since geoNear must be first)
   const firstStage = this.pipeline()[0];
   if (firstStage && Object.keys(firstStage)[0] === '$geoNear') {
@@ -154,7 +151,6 @@ tourSchema.pre('aggregate', function (next) {
   } else {
     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   }
-  next();
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
